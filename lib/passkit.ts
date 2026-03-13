@@ -56,9 +56,19 @@ const BRAND_CONFIG: Record<string, {
     labelColor: "rgb(200, 184, 157)",
     logoText: "myNORM",
   },
+  "MYVI Group (Holding)": {
+    backgroundColor: "rgb(41, 37, 37)",
+    foregroundColor: "rgb(255, 255, 255)",
+    labelColor: "rgb(200, 184, 157)",
+    logoText: "MYVI Group",
+  },
 };
 
 const DEFAULT_BRAND = BRAND_CONFIG["myNORM"];
+
+const BERATER_LABEL: Record<string, string> = {
+  "MYVI Group (Holding)": "TEAM MYVI",
+};
 
 /**
  * Lädt Zertifikate:
@@ -117,7 +127,7 @@ export async function generatePass(data: PassData): Promise<Buffer> {
   // Primärfeld: Name (groß, prominent)
   pass.primaryFields.push({
     key: "name",
-    label: "BERATER",
+    label: BERATER_LABEL[data.abteilung] || "BERATER",
     value: `${data.vorname} ${data.nachname}`,
   });
 
@@ -200,9 +210,9 @@ export async function generatePass(data: PassData): Promise<Buffer> {
     }
   );
 
-  // QR-Code: Link zur digitalen Profilseite
+  // QR-Code: vCard Download → iPhone zeigt "Kontakt hinzufügen"
   pass.setBarcodes({
-    message: `${process.env.NEXT_PUBLIC_BASE_URL || "https://wallet.myvi.de"}/berater/${data.serial}`,
+    message: `${process.env.NEXT_PUBLIC_BASE_URL || "https://wallet.myvi.de"}/api/vcard/${data.serial}`,
     format: "PKBarcodeFormatQR",
     messageEncoding: "iso-8859-1",
     altText: `${data.vorname} ${data.nachname}`,

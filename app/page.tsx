@@ -10,17 +10,20 @@ const ABTEILUNGEN = [
   "Das Karriere-Institut",
   "Wir:Personalberater",
   "myNORM",
+  "MYVI Group (Holding)",
 ];
 
-const TITEL = [
-  "Finanzberater",
-  "Senior Finanzberater",
-  "Geschäftsführer",
-  "Teamleiter",
-  "Consultant",
-  "Regionalleiter",
-  "Vertriebsleiter",
-];
+const TITEL_PRO_MARKE: Record<string, string[]> = {
+  "mitNORM": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
+  "mitNORM Firmenberatung": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
+  "EnergyFinance": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
+  "Das Karriere-Institut": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
+  "Wir:Personalberater": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
+  "myNORM": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
+  "MYVI Group (Holding)": ["Geschäftsführer", "Head of Digital", "Head of Marketing", "Head of Sales", "Operations Manager", "HR Manager", "Assistenz der Geschäftsführung"],
+};
+
+const DEFAULT_TITEL = ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"];
 
 const PREVIEW_COLORS: Record<string, { bg: string; accent: string }> = {
   "mitNORM": { bg: "#001a53", accent: "#30bcdf" },
@@ -29,6 +32,7 @@ const PREVIEW_COLORS: Record<string, { bg: string; accent: string }> = {
   "Das Karriere-Institut": { bg: "#781e1e", accent: "#dca064" },
   "Wir:Personalberater": { bg: "#3c2864", accent: "#b496dc" },
   "myNORM": { bg: "#292525", accent: "#c8b89d" },
+  "MYVI Group (Holding)": { bg: "#292525", accent: "#c8b89d" },
 };
 
 const DEFAULT_PREVIEW = { bg: "#292525", accent: "#c8b89d" };
@@ -51,9 +55,16 @@ export default function Home() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    if (name === "abteilung") {
+      setForm((prev) => ({ ...prev, abteilung: value, titel: "" }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
     setError("");
   };
+
+  const titelOptions = TITEL_PRO_MARKE[form.abteilung] || DEFAULT_TITEL;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -224,7 +235,7 @@ export default function Home() {
                   onChange={handleChange}
                 >
                   <option value="">Bitte wählen…</option>
-                  {TITEL.map((t) => (
+                  {titelOptions.map((t) => (
                     <option key={t} value={t}>{t}</option>
                   ))}
                 </select>
