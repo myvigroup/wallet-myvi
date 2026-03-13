@@ -149,7 +149,7 @@ export async function generatePass(data: PassData): Promise<Buffer> {
     value: `${data.vorname} ${data.nachname}`,
   });
 
-  // Sekundärfelder: Position (links) + Bereich (rechts)
+  // Sekundärfelder: Position (links) + Firma (rechts)
   pass.secondaryFields.push({
     key: "titel",
     label: "POSITION",
@@ -159,7 +159,7 @@ export async function generatePass(data: PassData): Promise<Buffer> {
 
   pass.secondaryFields.push({
     key: "abteilung",
-    label: "BEREICH",
+    label: "FIRMA",
     value: data.abteilung || "–",
     textAlignment: "PKTextAlignmentRight" as const,
   });
@@ -193,7 +193,7 @@ export async function generatePass(data: PassData): Promise<Buffer> {
     },
     {
       key: "back_abteilung",
-      label: "Bereich",
+      label: "Firma",
       value: data.abteilung || "",
     },
     {

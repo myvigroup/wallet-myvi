@@ -291,7 +291,7 @@ export default function Home() {
             </div>
 
             <div className={styles.field}>
-              <label htmlFor="abteilung">Bereich / Marke</label>
+              <label htmlFor="abteilung">Firma</label>
               <select
                 id="abteilung"
                 name="abteilung"
@@ -429,7 +429,7 @@ export default function Home() {
                 <span className={styles.walletValue}>{form.titel || "–"}</span>
               </div>
               <div>
-                <span className={styles.walletLabel} style={{ color: colors.accent }}>BEREICH</span>
+                <span className={styles.walletLabel} style={{ color: colors.accent }}>FIRMA</span>
                 <span className={styles.walletValue}>{form.abteilung || "–"}</span>
               </div>
             </div>
