@@ -54,7 +54,7 @@
 
 /* Wallet Preview */
 .walletPreview {
-  margin-bottom: 36px;
+  margin-top: 32px;
 }
 
 .walletCard {
@@ -137,8 +137,43 @@
   text-align: center;
   font-size: 11px;
   color: rgba(255, 255, 255, 0.3);
-  margin-top: 8px;
+  margin-bottom: 8px;
   letter-spacing: 0.05em;
+}
+
+/* Modus Toggle */
+.modusToggle {
+  display: flex;
+  background: var(--myvi-card-bg);
+  border: 1px solid var(--myvi-border);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 24px;
+}
+
+.modusBtn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modusBtn:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.modusBtnActive {
+  background: linear-gradient(135deg, var(--myvi-gold-1) 0%, var(--myvi-gold-2) 100%);
+  color: var(--myvi-black);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(200, 184, 157, 0.3);
 }
 
 /* Form */

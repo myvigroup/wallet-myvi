@@ -11,6 +11,7 @@ export type PassData = {
   telefon: string;
   mobil: string;
   email: string;
+  adresse: string;
   website: string;
 };
 
@@ -56,7 +57,7 @@ const BRAND_CONFIG: Record<string, {
     labelColor: "rgb(200, 184, 157)",
     logoText: "myNORM",
   },
-  "MYVI Group (Holding)": {
+  "MYVI Group": {
     backgroundColor: "rgb(41, 37, 37)",
     foregroundColor: "rgb(255, 255, 255)",
     labelColor: "rgb(200, 184, 157)",
@@ -64,10 +65,16 @@ const BRAND_CONFIG: Record<string, {
   },
 };
 
-const DEFAULT_BRAND = BRAND_CONFIG["myNORM"];
+const DEFAULT_BRAND = BRAND_CONFIG["MYVI Group"];
 
 const BERATER_LABEL: Record<string, string> = {
-  "MYVI Group (Holding)": "TEAM MYVI",
+  "mitNORM":                "FINANCIAL GUIDE",
+  "mitNORM Firmenberatung": "FIRMENBERATER",
+  "EnergyFinance":          "ENERGIEBERATER",
+  "Das Karriere-Institut":  "KARRIERE COACH",
+  "Wir:Personalberater":    "KEY ACCOUNT",
+  "myNORM":                 "MYNORM BERATER",
+  "MYVI Group":             "TEAM MYVI",
 };
 
 /**
@@ -199,6 +206,11 @@ export async function generatePass(data: PassData): Promise<Buffer> {
       label: "E-Mail",
       value: data.email,
       attributedValue: `<a href='mailto:${data.email}'>${data.email}</a>`,
+    },
+    {
+      key: "back_adresse",
+      label: "Adresse",
+      value: data.adresse || "",
     },
     {
       key: "back_website",

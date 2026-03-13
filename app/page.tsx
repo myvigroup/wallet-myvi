@@ -3,27 +3,30 @@
 import { useState } from "react";
 import styles from "./page.module.css";
 
-const ABTEILUNGEN = [
+const BERATER_MARKEN = [
+  "mitNORM",
+  "mitNORM Firmenberatung",
+];
+
+const ALLE_MARKEN = [
   "mitNORM",
   "mitNORM Firmenberatung",
   "EnergyFinance",
   "Das Karriere-Institut",
   "Wir:Personalberater",
   "myNORM",
-  "MYVI Group (Holding)",
+  "MYVI Group",
 ];
 
-const TITEL_PRO_MARKE: Record<string, string[]> = {
-  "mitNORM": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
-  "mitNORM Firmenberatung": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
-  "EnergyFinance": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
-  "Das Karriere-Institut": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
-  "Wir:Personalberater": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
-  "myNORM": ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"],
-  "MYVI Group (Holding)": ["Geschäftsführer", "Head of Digital", "Head of Marketing", "Head of Sales", "Operations Manager", "HR Manager", "Assistenz der Geschäftsführung"],
+const TITEL_PRO_MARKE: Record<string, string[] | "freitext"> = {
+  "mitNORM":                ["Financial Guide"],
+  "mitNORM Firmenberatung": ["Firmenberater"],
+  "EnergyFinance":          ["Energieberater", "Senior Energieberater"],
+  "Das Karriere-Institut":  ["Karriere Coach", "Senior Karriere Coach", "Teamleiter Coaching"],
+  "Wir:Personalberater":    ["Key Account Manager", "Senior Key Account Manager", "Teamleiter Personal"],
+  "myNORM":                 "freitext",
+  "MYVI Group":             "freitext",
 };
-
-const DEFAULT_TITEL = ["Finanzberater", "Senior Finanzberater", "Geschäftsführer", "Teamleiter", "Consultant", "Regionalleiter", "Vertriebsleiter"];
 
 const PREVIEW_COLORS: Record<string, { bg: string; accent: string }> = {
   "mitNORM": { bg: "#001a53", accent: "#30bcdf" },
@@ -32,7 +35,7 @@ const PREVIEW_COLORS: Record<string, { bg: string; accent: string }> = {
   "Das Karriere-Institut": { bg: "#781e1e", accent: "#dca064" },
   "Wir:Personalberater": { bg: "#3c2864", accent: "#b496dc" },
   "myNORM": { bg: "#292525", accent: "#c8b89d" },
-  "MYVI Group (Holding)": { bg: "#292525", accent: "#c8b89d" },
+  "MYVI Group":             { bg: "#292525", accent: "#c8b89d" },
 };
 
 const DEFAULT_PREVIEW = { bg: "#292525", accent: "#c8b89d" };
@@ -46,25 +49,39 @@ export default function Home() {
     telefon: "",
     mobil: "",
     email: "",
+    adresse: "",
     website: "www.myvi.de",
   });
+  const [modus, setModus] = useState<"berater" | "intern">("berater");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  const abteilungen = modus === "berater" ? BERATER_MARKEN : ALLE_MARKEN;
+
+  const handleModusChange = (newModus: "berater" | "intern") => {
+    setModus(newModus);
+    setForm((prev) => ({ ...prev, abteilung: "", titel: "" }));
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     if (name === "abteilung") {
-      setForm((prev) => ({ ...prev, abteilung: value, titel: "" }));
+      const titelConfig = TITEL_PRO_MARKE[value];
+      const autoTitel =
+        Array.isArray(titelConfig) && titelConfig.length === 1
+          ? titelConfig[0]
+          : "";
+      setForm((prev) => ({ ...prev, abteilung: value, titel: autoTitel }));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
     setError("");
   };
 
-  const titelOptions = TITEL_PRO_MARKE[form.abteilung] || DEFAULT_TITEL;
+  const titelConfig = form.abteilung ? TITEL_PRO_MARKE[form.abteilung] : undefined;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,38 +177,22 @@ export default function Home() {
           Apple Wallet Visitenkarte.
         </p>
 
-        {/* Wallet Preview Card */}
-        <div className={styles.walletPreview}>
-          <div
-            className={styles.walletCard}
-            style={{
-              background: `linear-gradient(135deg, ${colors.bg} 0%, ${colors.bg}dd 50%, ${colors.bg}99 100%)`,
-              borderColor: `${colors.accent}40`,
-            }}
+        {/* Modus Toggle */}
+        <div className={styles.modusToggle}>
+          <button
+            type="button"
+            className={`${styles.modusBtn} ${modus === "berater" ? styles.modusBtnActive : ""}`}
+            onClick={() => handleModusChange("berater")}
           >
-            <div className={styles.walletHeader}>
-              <span className={styles.walletLogo} style={{ color: colors.accent }}>
-                {form.abteilung || "MYVI Group"}
-              </span>
-            </div>
-            <div className={styles.walletName}>
-              {form.vorname || "Vorname"} {form.nachname || "Nachname"}
-            </div>
-            <div className={styles.walletMeta}>
-              <div>
-                <span className={styles.walletLabel} style={{ color: colors.accent }}>POSITION</span>
-                <span className={styles.walletValue}>{form.titel || "–"}</span>
-              </div>
-              <div>
-                <span className={styles.walletLabel} style={{ color: colors.accent }}>BEREICH</span>
-                <span className={styles.walletValue}>{form.abteilung || "–"}</span>
-              </div>
-            </div>
-            <div className={styles.walletContact} style={{ borderColor: `${colors.accent}26` }}>
-              <span>{form.email || "deine@email.de"}</span>
-            </div>
-          </div>
-          <p className={styles.previewNote}>Live-Vorschau deiner Wallet-Karte</p>
+            Berater
+          </button>
+          <button
+            type="button"
+            className={`${styles.modusBtn} ${modus === "intern" ? styles.modusBtnActive : ""}`}
+            onClick={() => handleModusChange("intern")}
+          >
+            Internes Team
+          </button>
         </div>
 
         {/* Form */}
@@ -225,63 +226,64 @@ export default function Home() {
               </div>
             </div>
 
-            <div className={styles.row}>
+            <div className={styles.field}>
+              <label htmlFor="abteilung">Bereich / Marke</label>
+              <select
+                id="abteilung"
+                name="abteilung"
+                value={form.abteilung}
+                onChange={handleChange}
+              >
+                <option value="">Bitte wählen…</option>
+                {abteilungen.map((a) => (
+                  <option key={a} value={a}>{a}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Position: auto-hidden if single value, dropdown if multiple, freitext if "freitext" */}
+            {titelConfig !== undefined &&
+              !(Array.isArray(titelConfig) && titelConfig.length === 1) && (
               <div className={styles.field}>
                 <label htmlFor="titel">Position</label>
-                <select
-                  id="titel"
-                  name="titel"
-                  value={form.titel}
-                  onChange={handleChange}
-                >
-                  <option value="">Bitte wählen…</option>
-                  {titelOptions.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
+                {titelConfig === "freitext" ? (
+                  <input
+                    id="titel"
+                    name="titel"
+                    type="text"
+                    placeholder="Position eingeben…"
+                    value={form.titel}
+                    onChange={handleChange}
+                  />
+                ) : (
+                  <select
+                    id="titel"
+                    name="titel"
+                    value={form.titel}
+                    onChange={handleChange}
+                  >
+                    <option value="">Bitte wählen…</option>
+                    {titelConfig.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                )}
               </div>
-              <div className={styles.field}>
-                <label htmlFor="abteilung">Bereich / Marke</label>
-                <select
-                  id="abteilung"
-                  name="abteilung"
-                  value={form.abteilung}
-                  onChange={handleChange}
-                >
-                  <option value="">Bitte wählen…</option>
-                  {ABTEILUNGEN.map((a) => (
-                    <option key={a} value={a}>{a}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            )}
           </div>
 
           <div className={styles.formSection}>
             <h3>Kontaktdaten</h3>
-            <div className={styles.row}>
-              <div className={styles.field}>
-                <label htmlFor="telefon">Telefon (Büro)</label>
-                <input
-                  id="telefon"
-                  name="telefon"
-                  type="tel"
-                  placeholder="+49 89 123456"
-                  value={form.telefon}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.field}>
-                <label htmlFor="mobil">Mobil</label>
-                <input
-                  id="mobil"
-                  name="mobil"
-                  type="tel"
-                  placeholder="+49 151 12345678"
-                  value={form.mobil}
-                  onChange={handleChange}
-                />
-              </div>
+            <div className={styles.field}>
+              <label htmlFor="mobil">Mobilnummer</label>
+              <input
+                id="mobil"
+                name="mobil"
+                type="tel"
+                placeholder="+49 151 12345678"
+                value={form.mobil}
+                onChange={handleChange}
+              />
             </div>
 
             <div className={styles.field}>
@@ -293,6 +295,18 @@ export default function Home() {
                 required
                 placeholder="max.mustermann@myvi.de"
                 value={form.email}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label htmlFor="adresse">Adresse</label>
+              <input
+                id="adresse"
+                name="adresse"
+                type="text"
+                placeholder="Musterstraße 1, 80331 München"
+                value={form.adresse}
                 onChange={handleChange}
               />
             </div>
@@ -326,6 +340,40 @@ export default function Home() {
             Du kannst deine Visitenkarte jederzeit mit derselben E-Mail-Adresse aktualisieren.
           </p>
         </form>
+
+        {/* Wallet Preview Card */}
+        <div className={styles.walletPreview}>
+          <p className={styles.previewNote}>Live-Vorschau deiner Wallet-Karte</p>
+          <div
+            className={styles.walletCard}
+            style={{
+              background: `linear-gradient(135deg, ${colors.bg} 0%, ${colors.bg}dd 50%, ${colors.bg}99 100%)`,
+              borderColor: `${colors.accent}40`,
+            }}
+          >
+            <div className={styles.walletHeader}>
+              <span className={styles.walletLogo} style={{ color: colors.accent }}>
+                {form.abteilung || "MYVI Group"}
+              </span>
+            </div>
+            <div className={styles.walletName}>
+              {form.vorname || "Vorname"} {form.nachname || "Nachname"}
+            </div>
+            <div className={styles.walletMeta}>
+              <div>
+                <span className={styles.walletLabel} style={{ color: colors.accent }}>POSITION</span>
+                <span className={styles.walletValue}>{form.titel || "–"}</span>
+              </div>
+              <div>
+                <span className={styles.walletLabel} style={{ color: colors.accent }}>BEREICH</span>
+                <span className={styles.walletValue}>{form.abteilung || "–"}</span>
+              </div>
+            </div>
+            <div className={styles.walletContact} style={{ borderColor: `${colors.accent}26` }}>
+              <span>{form.email || "deine@email.de"}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );

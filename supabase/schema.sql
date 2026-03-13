@@ -52,3 +52,9 @@ CREATE POLICY "Public select own" ON berater_cards
 
 -- Migration: Multi-Brand Support
 ALTER TABLE berater_cards ADD COLUMN IF NOT EXISTS brand_color TEXT;
+
+-- Migration: Adresse hinzufügen
+ALTER TABLE berater_cards ADD COLUMN IF NOT EXISTS adresse TEXT;
+
+-- Migration: Modus-Feld hinzufügen
+ALTER TABLE berater_cards ADD COLUMN IF NOT EXISTS modus TEXT DEFAULT 'berater';

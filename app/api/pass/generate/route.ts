@@ -6,7 +6,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { vorname, nachname, titel, abteilung, telefon, mobil, email, website } = body;
+    const { vorname, nachname, titel, abteilung, telefon, mobil, email, adresse, website } = body;
 
     // Pflichtfelder prüfen
     if (!vorname || !nachname || !email) {
@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
           abteilung: abteilung || null,
           telefon: telefon || null,
           mobil: mobil || null,
+          adresse: adresse || null,
           website: website || "www.myvi.de",
           pass_version: existingCard.pass_version + 1,
         })
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest) {
         abteilung: abteilung || null,
         telefon: telefon || null,
         mobil: mobil || null,
+        adresse: adresse || null,
         email: email.toLowerCase(),
         website: website || "www.myvi.de",
         pass_serial: serial,
@@ -83,6 +85,7 @@ export async function POST(req: NextRequest) {
       abteilung: abteilung || "",
       telefon: telefon || "",
       mobil: mobil || "",
+      adresse: adresse || "",
       email: email.toLowerCase(),
       website: website || "www.myvi.de",
     });
