@@ -176,6 +176,87 @@
   box-shadow: 0 2px 8px rgba(200, 184, 157, 0.3);
 }
 
+/* Password Prompt */
+.passwordOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.passwordCard {
+  background: var(--myvi-card-bg);
+  border: 1px solid var(--myvi-border);
+  border-radius: 16px;
+  padding: 32px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+}
+
+.passwordCard h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--myvi-white);
+  margin-bottom: 8px;
+  font-family: 'Jost', sans-serif;
+}
+
+.passwordCard p {
+  font-size: 14px;
+  color: var(--myvi-gray);
+  margin-bottom: 16px;
+}
+
+.passwordCard input {
+  background: rgba(17, 16, 16, 0.4);
+  border: 1px solid rgba(200, 184, 157, 0.15);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--myvi-white);
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.passwordCard input:focus {
+  border-color: var(--myvi-gold-1);
+  background: rgba(200, 184, 157, 0.05);
+  box-shadow: 0 0 0 3px rgba(200, 184, 157, 0.1);
+}
+
+.passwordError {
+  display: block;
+  color: #ff7070;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.passwordActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.passwordActions .btnSecondary,
+.passwordActions .btnPrimary {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 14px;
+  margin-top: 0;
+}
+
 /* Form */
 .form {
   display: flex;

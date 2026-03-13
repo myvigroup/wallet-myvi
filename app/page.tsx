@@ -29,12 +29,12 @@ const TITEL_PRO_MARKE: Record<string, string[] | "freitext"> = {
 };
 
 const PREVIEW_COLORS: Record<string, { bg: string; accent: string }> = {
-  "mitNORM": { bg: "#001a53", accent: "#30bcdf" },
-  "mitNORM Firmenberatung": { bg: "#5894c1", accent: "#dcf0f9" },
-  "EnergyFinance": { bg: "#005032", accent: "#64c878" },
-  "Das Karriere-Institut": { bg: "#781e1e", accent: "#dca064" },
-  "Wir:Personalberater": { bg: "#3c2864", accent: "#b496dc" },
-  "myNORM": { bg: "#292525", accent: "#c8b89d" },
+  "mitNORM":                { bg: "#001A53", accent: "#06BADD" },
+  "mitNORM Firmenberatung": { bg: "#32373C", accent: "#B0DFF8" },
+  "EnergyFinance":          { bg: "#07071A", accent: "#93C45E" },
+  "Das Karriere-Institut":  { bg: "#CC1426", accent: "#ffffff" },
+  "Wir:Personalberater":    { bg: "#699F5B", accent: "#ffffff" },
+  "myNORM":                 { bg: "#0E133E", accent: "#49AC8F" },
   "MYVI Group":             { bg: "#292525", accent: "#c8b89d" },
 };
 
@@ -53,6 +53,10 @@ export default function Home() {
     website: "www.myvi.de",
   });
   const [modus, setModus] = useState<"berater" | "intern">("berater");
+  const [internUnlocked, setInternUnlocked] = useState(false);
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -60,8 +64,25 @@ export default function Home() {
   const abteilungen = modus === "berater" ? BERATER_MARKEN : ALLE_MARKEN;
 
   const handleModusChange = (newModus: "berater" | "intern") => {
+    if (newModus === "intern" && !internUnlocked) {
+      setShowPasswordPrompt(true);
+      setPasswordInput("");
+      setPasswordError(false);
+      return;
+    }
     setModus(newModus);
     setForm((prev) => ({ ...prev, abteilung: "", titel: "" }));
+  };
+
+  const handlePasswordSubmit = () => {
+    if (passwordInput === process.env.NEXT_PUBLIC_INTERN_PASSWORD) {
+      setInternUnlocked(true);
+      setShowPasswordPrompt(false);
+      setModus("intern");
+      setForm((prev) => ({ ...prev, abteilung: "", titel: "" }));
+    } else {
+      setPasswordError(true);
+    }
   };
 
   const handleChange = (
@@ -194,6 +215,46 @@ export default function Home() {
             Internes Team
           </button>
         </div>
+
+        {/* Password Prompt */}
+        {showPasswordPrompt && (
+          <div className={styles.passwordOverlay}>
+            <div className={styles.passwordCard}>
+              <h3>Interner Bereich</h3>
+              <p>Bitte Passwort eingeben:</p>
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={(e) => {
+                  setPasswordInput(e.target.value);
+                  setPasswordError(false);
+                }}
+                onKeyDown={(e) => e.key === "Enter" && handlePasswordSubmit()}
+                placeholder="Passwort"
+                autoFocus
+              />
+              {passwordError && (
+                <span className={styles.passwordError}>Falsches Passwort</span>
+              )}
+              <div className={styles.passwordActions}>
+                <button
+                  type="button"
+                  className={styles.btnSecondary}
+                  onClick={() => setShowPasswordPrompt(false)}
+                >
+                  Abbrechen
+                </button>
+                <button
+                  type="button"
+                  className={styles.btnPrimary}
+                  onClick={handlePasswordSubmit}
+                >
+                  Entsperren
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Form */}
         <form className={styles.form} onSubmit={handleSubmit}>
