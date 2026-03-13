@@ -49,3 +49,6 @@ CREATE POLICY "Public insert" ON berater_cards
 
 CREATE POLICY "Public select own" ON berater_cards
   FOR SELECT USING (TRUE);
+
+-- Migration: Multi-Brand Support
+ALTER TABLE berater_cards ADD COLUMN IF NOT EXISTS brand_color TEXT;

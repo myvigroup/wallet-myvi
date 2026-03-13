@@ -14,6 +14,52 @@ export type PassData = {
   website: string;
 };
 
+const BRAND_CONFIG: Record<string, {
+  backgroundColor: string;
+  foregroundColor: string;
+  labelColor: string;
+  logoText: string;
+}> = {
+  "mitNORM": {
+    backgroundColor: "rgb(0, 26, 83)",
+    foregroundColor: "rgb(255, 255, 255)",
+    labelColor: "rgb(48, 188, 223)",
+    logoText: "mitNORM",
+  },
+  "mitNORM Firmenberatung": {
+    backgroundColor: "rgb(88, 148, 193)",
+    foregroundColor: "rgb(255, 255, 255)",
+    labelColor: "rgb(220, 240, 249)",
+    logoText: "mitNORM Firmenberatung",
+  },
+  "EnergyFinance": {
+    backgroundColor: "rgb(0, 80, 50)",
+    foregroundColor: "rgb(255, 255, 255)",
+    labelColor: "rgb(100, 200, 120)",
+    logoText: "EnergyFinance",
+  },
+  "Das Karriere-Institut": {
+    backgroundColor: "rgb(120, 30, 30)",
+    foregroundColor: "rgb(255, 255, 255)",
+    labelColor: "rgb(220, 160, 100)",
+    logoText: "Das Karriere-Institut",
+  },
+  "Wir:Personalberater": {
+    backgroundColor: "rgb(60, 40, 100)",
+    foregroundColor: "rgb(255, 255, 255)",
+    labelColor: "rgb(180, 150, 220)",
+    logoText: "Wir:Personalberater",
+  },
+  "myNORM": {
+    backgroundColor: "rgb(41, 37, 37)",
+    foregroundColor: "rgb(255, 255, 255)",
+    labelColor: "rgb(200, 184, 157)",
+    logoText: "myNORM",
+  },
+};
+
+const DEFAULT_BRAND = BRAND_CONFIG["myNORM"];
+
 /**
  * Lädt Zertifikate:
  * - Lokal: direkt aus /certs/ (Dateien)
@@ -50,6 +96,7 @@ function loadCertificates() {
 export async function generatePass(data: PassData): Promise<Buffer> {
   const modelPath = path.resolve(process.cwd(), "passes", "visitenkarte.pass");
   const certificates = loadCertificates();
+  const brand = BRAND_CONFIG[data.abteilung] || DEFAULT_BRAND;
 
   const pass = await PKPass.from(
     {
@@ -57,10 +104,13 @@ export async function generatePass(data: PassData): Promise<Buffer> {
       certificates,
     },
     {
-      // Pflichtfelder überschreiben
       serialNumber: data.serial,
       passTypeIdentifier: process.env.APPLE_PASS_TYPE_ID!,
       teamIdentifier: process.env.APPLE_TEAM_ID!,
+      backgroundColor: brand.backgroundColor,
+      foregroundColor: brand.foregroundColor,
+      labelColor: brand.labelColor,
+      logoText: brand.logoText,
     }
   );
 

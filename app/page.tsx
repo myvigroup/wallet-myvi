@@ -22,6 +22,17 @@ const TITEL = [
   "Vertriebsleiter",
 ];
 
+const PREVIEW_COLORS: Record<string, { bg: string; accent: string }> = {
+  "mitNORM": { bg: "#001a53", accent: "#30bcdf" },
+  "mitNORM Firmenberatung": { bg: "#5894c1", accent: "#dcf0f9" },
+  "EnergyFinance": { bg: "#005032", accent: "#64c878" },
+  "Das Karriere-Institut": { bg: "#781e1e", accent: "#dca064" },
+  "Wir:Personalberater": { bg: "#3c2864", accent: "#b496dc" },
+  "myNORM": { bg: "#292525", accent: "#c8b89d" },
+};
+
+const DEFAULT_PREVIEW = { bg: "#292525", accent: "#c8b89d" };
+
 export default function Home() {
   const [form, setForm] = useState({
     vorname: "",
@@ -83,6 +94,8 @@ export default function Home() {
     }
   };
 
+  const colors = PREVIEW_COLORS[form.abteilung] || DEFAULT_PREVIEW;
+
   if (success) {
     return (
       <main className={styles.main}>
@@ -138,24 +151,32 @@ export default function Home() {
 
         {/* Wallet Preview Card */}
         <div className={styles.walletPreview}>
-          <div className={styles.walletCard}>
+          <div
+            className={styles.walletCard}
+            style={{
+              background: `linear-gradient(135deg, ${colors.bg} 0%, ${colors.bg}dd 50%, ${colors.bg}99 100%)`,
+              borderColor: `${colors.accent}40`,
+            }}
+          >
             <div className={styles.walletHeader}>
-              <span className={styles.walletLogo}>MYVI Group</span>
+              <span className={styles.walletLogo} style={{ color: colors.accent }}>
+                {form.abteilung || "MYVI Group"}
+              </span>
             </div>
             <div className={styles.walletName}>
               {form.vorname || "Vorname"} {form.nachname || "Nachname"}
             </div>
             <div className={styles.walletMeta}>
               <div>
-                <span className={styles.walletLabel}>POSITION</span>
+                <span className={styles.walletLabel} style={{ color: colors.accent }}>POSITION</span>
                 <span className={styles.walletValue}>{form.titel || "–"}</span>
               </div>
               <div>
-                <span className={styles.walletLabel}>BEREICH</span>
+                <span className={styles.walletLabel} style={{ color: colors.accent }}>BEREICH</span>
                 <span className={styles.walletValue}>{form.abteilung || "–"}</span>
               </div>
             </div>
-            <div className={styles.walletContact}>
+            <div className={styles.walletContact} style={{ borderColor: `${colors.accent}26` }}>
               <span>{form.email || "deine@email.de"}</span>
             </div>
           </div>
