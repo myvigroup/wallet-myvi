@@ -4,6 +4,13 @@ import { generatePass } from "@/lib/passkit";
 import { supabaseAdmin } from "@/lib/supabase";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ALLOWED_DOMAINS = [
+  "mitnorm.com",
+  "myvi.de",
+  "wirpersonalberater.de",
+  "daskarriereinstitut.de",
+  "mynorm.de",
+];
 const DEFAULT_WEBSITE = "www.myvi.de";
 
 export async function POST(req: NextRequest) {
@@ -26,6 +33,14 @@ export async function POST(req: NextRequest) {
     }
 
     const normalizedEmail = email.toLowerCase();
+    const domain = normalizedEmail.split("@")[1];
+
+    if (!ALLOWED_DOMAINS.includes(domain)) {
+      return NextResponse.json(
+        { error: "Bitte verwende deine Firmen-E-Mail-Adresse (@mitnorm.com, @myvi.de, etc.)." },
+        { status: 400 }
+      );
+    }
 
     const cardData = {
       vorname,

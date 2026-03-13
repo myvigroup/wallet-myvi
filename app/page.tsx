@@ -3,6 +3,14 @@
 import { useState } from "react";
 import styles from "./page.module.css";
 
+const ALLOWED_DOMAINS = [
+  "mitnorm.com",
+  "myvi.de",
+  "wirpersonalberater.de",
+  "daskarriereinstitut.de",
+  "mynorm.de",
+];
+
 const ALLE_MARKEN = [
   "mitNORM",
   "mitNORM Firmenberatung",
@@ -91,6 +99,13 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const domain = form.email.toLowerCase().split("@")[1];
+    if (!domain || !ALLOWED_DOMAINS.includes(domain)) {
+      setError("Bitte verwende deine Firmen-E-Mail-Adresse (@mitnorm.com, @myvi.de, etc.).");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
