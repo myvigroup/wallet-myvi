@@ -106,9 +106,11 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Pass Generation Error:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack : "";
+    console.error("Pass Generation Error:", message, stack);
     return NextResponse.json(
-      { error: "Fehler beim Erstellen des Passes. Bitte versuche es erneut." },
+      { error: `Pass-Fehler: ${message}` },
       { status: 500 }
     );
   }
