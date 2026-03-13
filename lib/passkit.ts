@@ -64,61 +64,42 @@ export async function generatePass(data: PassData): Promise<Buffer> {
     }
   );
 
-  // Primärfeld: Name
+  // Primärfeld: Name (groß, prominent)
   pass.primaryFields.push({
     key: "name",
     label: "BERATER",
     value: `${data.vorname} ${data.nachname}`,
   });
 
-  // Sekundärfelder: Titel & Abteilung
-  if (data.titel) {
-    pass.secondaryFields.push({
-      key: "titel",
-      label: "POSITION",
-      value: data.titel,
-    });
-  }
+  // Sekundärfelder: Position (links) + Bereich (rechts)
+  pass.secondaryFields.push({
+    key: "titel",
+    label: "POSITION",
+    value: data.titel || "–",
+    textAlignment: "PKTextAlignmentLeft" as const,
+  });
 
-  if (data.abteilung) {
-    pass.secondaryFields.push({
-      key: "abteilung",
-      label: "BEREICH",
-      value: data.abteilung,
-    });
-  }
+  pass.secondaryFields.push({
+    key: "abteilung",
+    label: "BEREICH",
+    value: data.abteilung || "–",
+    textAlignment: "PKTextAlignmentRight" as const,
+  });
 
-  // Hilfsfelder: Kontakt
-  const auxFields = [];
+  // Hilfsfelder: Telefon (links) + E-Mail (rechts)
+  pass.auxiliaryFields.push({
+    key: "telefon",
+    label: "TELEFON",
+    value: data.telefon || data.mobil || "–",
+    textAlignment: "PKTextAlignmentLeft" as const,
+  });
 
-  if (data.telefon) {
-    auxFields.push({
-      key: "telefon",
-      label: "TELEFON",
-      value: data.telefon,
-      textAlignment: "PKTextAlignmentLeft" as const,
-    });
-  }
-
-  if (data.mobil) {
-    auxFields.push({
-      key: "mobil",
-      label: "MOBIL",
-      value: data.mobil,
-      textAlignment: "PKTextAlignmentLeft" as const,
-    });
-  }
-
-  if (data.email) {
-    auxFields.push({
-      key: "email",
-      label: "E-MAIL",
-      value: data.email,
-      textAlignment: "PKTextAlignmentLeft" as const,
-    });
-  }
-
-  pass.auxiliaryFields.push(...auxFields);
+  pass.auxiliaryFields.push({
+    key: "email",
+    label: "E-MAIL",
+    value: data.email || "–",
+    textAlignment: "PKTextAlignmentRight" as const,
+  });
 
   // Rückseite (detaillierte Infos)
   pass.backFields.push(
