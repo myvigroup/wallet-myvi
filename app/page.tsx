@@ -21,12 +21,12 @@ const ALLE_MARKEN = [
   "MYVI Group",
 ];
 
-const TITEL_PRO_MARKE: Record<string, string[] | "freitext"> = {
-  "mitNORM":                ["Financial Guide"],
-  "mitNORM Firmenberatung": ["Firmenberater"],
-  "EnergyFinance":          ["Energieberater", "Senior Energieberater"],
-  "Das Karriere-Institut":  ["Karriere Coach", "Senior Karriere Coach", "Teamleiter Coaching"],
-  "Wir:Personalberater":    ["Key Account Manager", "Senior Key Account Manager", "Teamleiter Personal"],
+const TITEL_PRO_MARKE: Record<string, "freitext"> = {
+  "mitNORM":                "freitext",
+  "mitNORM Firmenberatung": "freitext",
+  "EnergyFinance":          "freitext",
+  "Das Karriere-Institut":  "freitext",
+  "Wir:Personalberater":    "freitext",
   "myNORM":                 "freitext",
   "MYVI Group":             "freitext",
 };
