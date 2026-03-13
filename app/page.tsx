@@ -6,6 +6,9 @@ import styles from "./page.module.css";
 const BERATER_MARKEN = [
   "mitNORM",
   "mitNORM Firmenberatung",
+  "EnergyFinance",
+  "Das Karriere-Institut",
+  "Wir:Personalberater",
 ];
 
 const ALLE_MARKEN = [

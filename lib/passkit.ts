@@ -131,6 +131,17 @@ export async function generatePass(data: PassData): Promise<Buffer> {
     }
   );
 
+  // Tochterfirmen: MYVI-Logo entfernen (durch transparentes 1x1 PNG ersetzen)
+  if (data.abteilung !== "MYVI Group") {
+    const transparentPng = Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQAB" +
+      "Nl7BcQAAAABJRU5ErkJggg==",
+      "base64"
+    );
+    pass.addBuffer("logo.png", transparentPng);
+    pass.addBuffer("logo@2x.png", transparentPng);
+  }
+
   // Primärfeld: Name (groß, prominent)
   pass.primaryFields.push({
     key: "name",
