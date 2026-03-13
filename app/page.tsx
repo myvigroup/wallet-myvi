@@ -438,6 +438,12 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        <footer className={styles.footer}>
+          <a href="https://myvi.de/datenschutz1" target="_blank" rel="noopener noreferrer">Datenschutz</a>
+          <span>·</span>
+          <a href="https://myvi.de/impressum1" target="_blank" rel="noopener noreferrer">Impressum</a>
+        </footer>
       </div>
     </main>
   );

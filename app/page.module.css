@@ -508,6 +508,28 @@
   text-align: center;
 }
 
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+  padding-bottom: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.footer a {
+  color: rgba(255, 255, 255, 0.3);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer a:hover {
+  color: var(--myvi-gold-1);
+}
+
 /* Mobile */
 @media (max-width: 520px) {
   .main {
