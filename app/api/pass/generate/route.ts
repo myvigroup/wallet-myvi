@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
       .replace(/ü/g, "ue");
 
     // .pkpass zurückgeben
-    return new NextResponse(passBuffer, {
+    return new NextResponse(new Uint8Array(passBuffer), {
       status: 200,
       headers: {
         "Content-Type": "application/vnd.apple.pkpass",
