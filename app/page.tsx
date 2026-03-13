@@ -93,19 +93,14 @@ export default function Home() {
   ) => {
     const { name, value } = e.target;
     if (name === "abteilung") {
-      const titelConfig = TITEL_PRO_MARKE[value];
-      const autoTitel =
-        Array.isArray(titelConfig) && titelConfig.length === 1
-          ? titelConfig[0]
-          : "";
-      setForm((prev) => ({ ...prev, abteilung: value, titel: autoTitel }));
+      setForm((prev) => ({ ...prev, abteilung: value, titel: "" }));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
     setError("");
   };
 
-  const titelConfig = form.abteilung ? TITEL_PRO_MARKE[form.abteilung] : undefined;
+  const showTitel = !!form.abteilung;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -305,33 +300,17 @@ export default function Home() {
               </select>
             </div>
 
-            {/* Position: auto-hidden if single value, dropdown if multiple, freitext if "freitext" */}
-            {titelConfig !== undefined &&
-              !(Array.isArray(titelConfig) && titelConfig.length === 1) && (
+            {showTitel && (
               <div className={styles.field}>
                 <label htmlFor="titel">Position</label>
-                {titelConfig === "freitext" ? (
-                  <input
-                    id="titel"
-                    name="titel"
-                    type="text"
-                    placeholder="Position eingeben…"
-                    value={form.titel}
-                    onChange={handleChange}
-                  />
-                ) : (
-                  <select
-                    id="titel"
-                    name="titel"
-                    value={form.titel}
-                    onChange={handleChange}
-                  >
-                    <option value="">Bitte wählen…</option>
-                    {titelConfig.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
-                )}
+                <input
+                  id="titel"
+                  name="titel"
+                  type="text"
+                  placeholder="Position eingeben…"
+                  value={form.titel}
+                  onChange={handleChange}
+                />
               </div>
             )}
           </div>
@@ -364,7 +343,7 @@ export default function Home() {
             </div>
 
             <div className={styles.field}>
-              <label htmlFor="adresse">Adresse</label>
+              <label htmlFor="adresse">Firmenadresse</label>
               <input
                 id="adresse"
                 name="adresse"
