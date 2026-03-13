@@ -7,8 +7,8 @@
   "description": "Digitale Visitenkarte",
 
   "foregroundColor": "rgb(255, 255, 255)",
-  "backgroundColor": "rgb(0, 26, 83)",
-  "labelColor": "rgb(48, 188, 223)",
+  "backgroundColor": "rgb(41, 37, 37)",
+  "labelColor": "rgb(200, 184, 157)",
   "logoText": "MYVI Group",
 
   "generic": {
