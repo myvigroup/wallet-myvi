@@ -53,6 +53,7 @@ export default function Home() {
     mobil: "",
     email: "",
     adresse: "",
+    buchungslink: "",
     website: "www.myvi.de",
   });
   const [modus, setModus] = useState<"berater" | "intern">("berater");
@@ -350,6 +351,18 @@ export default function Home() {
                 type="text"
                 placeholder="Musterstraße 1, 80331 München"
                 value={form.adresse}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label htmlFor="buchungslink">Buchungslink (optional)</label>
+              <input
+                id="buchungslink"
+                name="buchungslink"
+                type="url"
+                placeholder="https://calendly.com/dein-name"
+                value={form.buchungslink}
                 onChange={handleChange}
               />
             </div>

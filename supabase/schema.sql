@@ -58,3 +58,6 @@ ALTER TABLE berater_cards ADD COLUMN IF NOT EXISTS adresse TEXT;
 
 -- Migration: Modus-Feld hinzufügen
 ALTER TABLE berater_cards ADD COLUMN IF NOT EXISTS modus TEXT DEFAULT 'berater';
+
+-- Migration: Buchungslink hinzufügen
+ALTER TABLE berater_cards ADD COLUMN IF NOT EXISTS buchungslink TEXT;

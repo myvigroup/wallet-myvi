@@ -12,6 +12,7 @@ export type PassData = {
   mobil: string;
   email: string;
   adresse: string;
+  buchungslink: string;
   website: string;
 };
 
@@ -222,6 +223,14 @@ export async function generatePass(data: PassData): Promise<Buffer> {
       key: "back_adresse",
       label: "Adresse",
       value: data.adresse || "",
+    },
+    {
+      key: "back_buchungslink",
+      label: "Termin buchen",
+      value: data.buchungslink || "",
+      attributedValue: data.buchungslink
+        ? `<a href='${data.buchungslink}'>Termin buchen</a>`
+        : "",
     },
     {
       key: "back_website",
