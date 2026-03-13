@@ -1,0 +1,31 @@
+{
+  "passTypeIdentifier": "pass.de.myvi.visitenkarte",
+  "serialNumber": "WIRD_ÜBERSCHRIEBEN",
+  "teamIdentifier": "WIRD_ÜBERSCHRIEBEN",
+  "formatVersion": 1,
+  "organizationName": "MYVI Group",
+  "description": "Digitale Visitenkarte",
+
+  "foregroundColor": "rgb(255, 255, 255)",
+  "backgroundColor": "rgb(0, 26, 83)",
+  "labelColor": "rgb(48, 188, 223)",
+  "logoText": "MYVI Group",
+
+  "generic": {
+    "primaryFields": [],
+    "secondaryFields": [],
+    "auxiliaryFields": [],
+    "backFields": []
+  },
+
+  "barcodes": [
+    {
+      "format": "PKBarcodeFormatQR",
+      "message": "https://wallet.myvi.de",
+      "messageEncoding": "iso-8859-1"
+    }
+  ],
+
+  "sharingProhibited": false,
+  "suppressStripShine": false
+}

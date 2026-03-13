@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --myvi-dark: #292525;
+  --myvi-gold-1: #c8b89d;
+  --myvi-gold-2: #b5a288;
+  --myvi-gold-3: #9e8479;
+  --myvi-black: #111010;
+  --myvi-white: #ffffff;
+  --myvi-gray: rgba(255, 255, 255, 0.6);
+  --myvi-gold-light: rgba(200, 184, 157, 0.15);
+  --myvi-gold-glow: rgba(200, 184, 157, 0.35);
+  --myvi-border: rgba(200, 184, 157, 0.2);
+  --myvi-card-bg: rgba(41, 37, 37, 0.6);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Jost', sans-serif;
+  background-color: var(--myvi-black);
+  color: var(--myvi-white);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* Subtle animated grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200, 184, 157, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 184, 157, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Radial glow */
+body::after {
+  content: '';
+  position: fixed;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 600px;
+  background: radial-gradient(ellipse at center, rgba(200, 184, 157, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
