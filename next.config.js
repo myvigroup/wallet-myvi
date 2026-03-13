@@ -3,7 +3,7 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["passkit-generator"],
     outputFileTracingIncludes: {
-      "/api/pass/generate": ["./passes/**/*", "./certs/**/*"],
+      "/api/pass/generate": ["./passes/**/*", "./passes/**/*.pass/**/*", "./certs/**/*"],
     },
   },
 };

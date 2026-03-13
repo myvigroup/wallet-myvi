@@ -48,7 +48,7 @@ function loadCertificates() {
  * Erstellt einen Apple Wallet .pkpass Buffer
  */
 export async function generatePass(data: PassData): Promise<Buffer> {
-  const modelPath = path.resolve(process.cwd(), "passes", "visitenkarte");
+  const modelPath = path.resolve(process.cwd(), "passes", "visitenkarte.pass");
   const certificates = loadCertificates();
 
   const pass = await PKPass.from(
