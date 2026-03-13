@@ -23,7 +23,7 @@ export async function GET(
     data.mobil ? `TEL;TYPE=CELL:${data.mobil}` : "",
     data.telefon ? `TEL;TYPE=WORK:${data.telefon}` : "",
     `EMAIL;TYPE=WORK:${data.email}`,
-    data.adresse ? `ADR;TYPE=WORK:;;${data.adresse};;;;` : "",
+    data.strasse || data.ort ? `ADR;TYPE=WORK:;;${data.strasse || ""};${data.ort || ""};;${data.plz || ""};` : "",
     `URL:https://${data.website || "www.myvi.de"}`,
     "NOTE:MYVI Financial Guidance Group",
     "END:VCARD",

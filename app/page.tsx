@@ -3,14 +3,6 @@
 import { useState } from "react";
 import styles from "./page.module.css";
 
-const BERATER_MARKEN = [
-  "mitNORM",
-  "mitNORM Firmenberatung",
-  "EnergyFinance",
-  "Das Karriere-Institut",
-  "Wir:Personalberater",
-];
-
 const ALLE_MARKEN = [
   "mitNORM",
   "mitNORM Firmenberatung",
@@ -19,17 +11,10 @@ const ALLE_MARKEN = [
   "Wir:Personalberater",
   "myNORM",
   "MYVI Group",
-];
+] as const;
 
-const TITEL_PRO_MARKE: Record<string, "freitext"> = {
-  "mitNORM":                "freitext",
-  "mitNORM Firmenberatung": "freitext",
-  "EnergyFinance":          "freitext",
-  "Das Karriere-Institut":  "freitext",
-  "Wir:Personalberater":    "freitext",
-  "myNORM":                 "freitext",
-  "MYVI Group":             "freitext",
-};
+const INTERN_ONLY = new Set(["myNORM", "MYVI Group"]);
+const BERATER_MARKEN = ALLE_MARKEN.filter((m) => !INTERN_ONLY.has(m));
 
 const PREVIEW_COLORS: Record<string, { bg: string; accent: string }> = {
   "mitNORM":                { bg: "#001A53", accent: "#06BADD" },
@@ -49,10 +34,11 @@ export default function Home() {
     nachname: "",
     titel: "",
     abteilung: "",
-    telefon: "",
     mobil: "",
     email: "",
-    adresse: "",
+    strasse: "",
+    plz: "",
+    ort: "",
     buchungslink: "",
     website: "www.myvi.de",
   });
@@ -112,7 +98,10 @@ export default function Home() {
       const res = await fetch("/api/pass/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          adresse: [form.strasse, [form.plz, form.ort].filter(Boolean).join(" ")].filter(Boolean).join(", "),
+        }),
       });
 
       if (!res.ok) {
@@ -344,15 +333,40 @@ export default function Home() {
             </div>
 
             <div className={styles.field}>
-              <label htmlFor="adresse">Firmenadresse</label>
+              <label htmlFor="strasse">Straße + Hausnr.</label>
               <input
-                id="adresse"
-                name="adresse"
+                id="strasse"
+                name="strasse"
                 type="text"
-                placeholder="Musterstraße 1, 80331 München"
-                value={form.adresse}
+                placeholder="Musterstraße 1"
+                value={form.strasse}
                 onChange={handleChange}
               />
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label htmlFor="plz">PLZ</label>
+                <input
+                  id="plz"
+                  name="plz"
+                  type="text"
+                  placeholder="80331"
+                  value={form.plz}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className={styles.field}>
+                <label htmlFor="ort">Ort</label>
+                <input
+                  id="ort"
+                  name="ort"
+                  type="text"
+                  placeholder="München"
+                  value={form.ort}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
 
             <div className={styles.field}>

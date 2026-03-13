@@ -3,12 +3,14 @@ import { v4 as uuidv4 } from "uuid";
 import { generatePass } from "@/lib/passkit";
 import { supabaseAdmin } from "@/lib/supabase";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DEFAULT_WEBSITE = "www.myvi.de";
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { vorname, nachname, titel, abteilung, telefon, mobil, email, adresse, buchungslink, website } = body;
+    const { vorname, nachname, titel, abteilung, telefon, mobil, email, adresse, strasse, plz, ort, buchungslink, website } = body;
 
-    // Pflichtfelder prüfen
     if (!vorname || !nachname || !email) {
       return NextResponse.json(
         { error: "Vorname, Nachname und E-Mail sind Pflichtfelder." },
@@ -16,56 +18,58 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // E-Mail-Format prüfen
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!EMAIL_REGEX.test(email)) {
       return NextResponse.json(
         { error: "Ungültige E-Mail-Adresse." },
         { status: 400 }
       );
     }
 
-    // Prüfen ob E-Mail bereits existiert → Pass aktualisieren
+    const normalizedEmail = email.toLowerCase();
+
+    const cardData = {
+      vorname,
+      nachname,
+      titel: titel || null,
+      abteilung: abteilung || null,
+      telefon: telefon || null,
+      mobil: mobil || null,
+      strasse: strasse || null,
+      plz: plz || null,
+      ort: ort || null,
+      buchungslink: buchungslink || null,
+      website: website || DEFAULT_WEBSITE,
+    };
+
+    const fullAdresse = adresse || [strasse, [plz, ort].filter(Boolean).join(" ")].filter(Boolean).join(", ") || "";
+
     const { data: existingCard } = await supabaseAdmin
       .from("berater_cards")
-      .select("*")
-      .eq("email", email.toLowerCase())
+      .select("pass_serial, pass_version")
+      .eq("email", normalizedEmail)
       .single();
 
     let serial: string;
 
     if (existingCard) {
-      // Existierenden Pass aktualisieren
       serial = existingCard.pass_serial;
-      await supabaseAdmin
+      const { error } = await supabaseAdmin
         .from("berater_cards")
-        .update({
-          vorname,
-          nachname,
-          titel: titel || null,
-          abteilung: abteilung || null,
-          telefon: telefon || null,
-          mobil: mobil || null,
-          adresse: adresse || null,
-          buchungslink: buchungslink || null,
-          website: website || "www.myvi.de",
-          pass_version: existingCard.pass_version + 1,
-        })
-        .eq("email", email.toLowerCase());
+        .update({ ...cardData, pass_version: existingCard.pass_version + 1 })
+        .eq("email", normalizedEmail);
+
+      if (error) {
+        console.error("Supabase Update Error:", error);
+        return NextResponse.json(
+          { error: "Datenbankfehler beim Aktualisieren." },
+          { status: 500 }
+        );
+      }
     } else {
-      // Neuen Pass erstellen
       serial = uuidv4();
       const { error } = await supabaseAdmin.from("berater_cards").insert({
-        vorname,
-        nachname,
-        titel: titel || null,
-        abteilung: abteilung || null,
-        telefon: telefon || null,
-        mobil: mobil || null,
-        adresse: adresse || null,
-        buchungslink: buchungslink || null,
-        email: email.toLowerCase(),
-        website: website || "www.myvi.de",
+        ...cardData,
+        email: normalizedEmail,
         pass_serial: serial,
       });
 
@@ -78,7 +82,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // .pkpass generieren
     const passBuffer = await generatePass({
       serial,
       vorname,
@@ -87,10 +90,10 @@ export async function POST(req: NextRequest) {
       abteilung: abteilung || "",
       telefon: telefon || "",
       mobil: mobil || "",
-      adresse: adresse || "",
+      adresse: fullAdresse,
       buchungslink: buchungslink || "",
-      email: email.toLowerCase(),
-      website: website || "www.myvi.de",
+      email: normalizedEmail,
+      website: website || DEFAULT_WEBSITE,
     });
 
     const filename = `${vorname}-${nachname}-Visitenkarte.pkpass`
@@ -100,10 +103,7 @@ export async function POST(req: NextRequest) {
       .replace(/ö/g, "oe")
       .replace(/ü/g, "ue");
 
-    // .pkpass zurückgeben
-    const arrayBuffer = new ArrayBuffer(passBuffer.length);
-    new Uint8Array(arrayBuffer).set(passBuffer);
-    return new Response(arrayBuffer, {
+    return new Response(new Uint8Array(passBuffer), {
       status: 200,
       headers: {
         "Content-Type": "application/vnd.apple.pkpass",
