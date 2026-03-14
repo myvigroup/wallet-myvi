@@ -59,13 +59,14 @@ export function generateGoogleWalletUrl(data: GooglePassData): string {
         {
           id: classId,
           issuerName: "MYVI Group",
+          multipleDevicesAndHoldersAllowedStatus: "MULTIPLE_HOLDERS",
         },
       ],
       genericObjects: [
         {
           id: objectId,
           classId,
-          genericType: "GENERIC_TYPE_UNSPECIFIED",
+          state: "ACTIVE",
           hexBackgroundColor: bgColor,
           logo: {
             sourceUri: {
