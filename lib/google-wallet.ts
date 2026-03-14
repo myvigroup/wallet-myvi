@@ -67,6 +67,11 @@ export function generateGoogleWalletUrl(data: GooglePassData): string {
           classId,
           genericType: "GENERIC_TYPE_UNSPECIFIED",
           hexBackgroundColor: bgColor,
+          logo: {
+            sourceUri: {
+              uri: `${baseUrl}/logo-white.png`,
+            },
+          },
           cardTitle: {
             defaultValue: { language: "de", value: data.abteilung || "MYVI Group" },
           },
