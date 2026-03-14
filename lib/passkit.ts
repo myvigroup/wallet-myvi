@@ -1,6 +1,7 @@
 import { PKPass } from "passkit-generator";
 import path from "path";
 import fs from "fs";
+import { DEFAULT_WEBSITE } from "./constants";
 
 export type PassData = {
   serial: string;
@@ -8,7 +9,6 @@ export type PassData = {
   nachname: string;
   titel: string;
   abteilung: string;
-  telefon: string;
   mobil: string;
   email: string;
   adresse: string;
@@ -108,18 +108,30 @@ function loadCertificates() {
   };
 }
 
+const MODEL_PATH = path.resolve(process.cwd(), "passes", "visitenkarte.pass");
+
+const TRANSPARENT_1PX_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQAB" +
+  "Nl7BcQAAAABJRU5ErkJggg==",
+  "base64"
+);
+
+let _cachedCerts: ReturnType<typeof loadCertificates> | null = null;
+function getCertificates() {
+  if (!_cachedCerts) _cachedCerts = loadCertificates();
+  return _cachedCerts;
+}
+
 /**
  * Erstellt einen Apple Wallet .pkpass Buffer
  */
 export async function generatePass(data: PassData): Promise<Buffer> {
-  const modelPath = path.resolve(process.cwd(), "passes", "visitenkarte.pass");
-  const certificates = loadCertificates();
   const brand = BRAND_CONFIG[data.abteilung] || DEFAULT_BRAND;
 
   const pass = await PKPass.from(
     {
-      model: modelPath,
-      certificates,
+      model: MODEL_PATH,
+      certificates: getCertificates(),
     },
     {
       serialNumber: data.serial,
@@ -134,13 +146,8 @@ export async function generatePass(data: PassData): Promise<Buffer> {
 
   // Tochterfirmen: MYVI-Logo entfernen (durch transparentes 1x1 PNG ersetzen)
   if (data.abteilung !== "MYVI Group") {
-    const transparentPng = Buffer.from(
-      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQAB" +
-      "Nl7BcQAAAABJRU5ErkJggg==",
-      "base64"
-    );
-    pass.addBuffer("logo.png", transparentPng);
-    pass.addBuffer("logo@2x.png", transparentPng);
+    pass.addBuffer("logo.png", TRANSPARENT_1PX_PNG);
+    pass.addBuffer("logo@2x.png", TRANSPARENT_1PX_PNG);
   }
 
   // Primärfeld: Name (groß, prominent)
@@ -165,11 +172,11 @@ export async function generatePass(data: PassData): Promise<Buffer> {
     textAlignment: "PKTextAlignmentRight" as const,
   });
 
-  // Hilfsfelder: Telefon (links) + E-Mail (rechts)
+  // Hilfsfelder: Mobil (links) + E-Mail (rechts)
   pass.auxiliaryFields.push({
-    key: "telefon",
-    label: "TELEFON",
-    value: data.telefon || data.mobil || "–",
+    key: "mobil",
+    label: "MOBIL",
+    value: data.mobil || "–",
     textAlignment: "PKTextAlignmentLeft" as const,
   });
 
@@ -198,16 +205,8 @@ export async function generatePass(data: PassData): Promise<Buffer> {
       value: data.abteilung || "",
     },
     {
-      key: "back_telefon",
-      label: "Telefon",
-      value: data.telefon || "",
-      attributedValue: data.telefon
-        ? `<a href='tel:${data.telefon.replace(/\s/g, "")}'>${data.telefon}</a>`
-        : "",
-    },
-    {
       key: "back_mobil",
-      label: "Mobil",
+      label: "Mobilnummer",
       value: data.mobil || "",
       attributedValue: data.mobil
         ? `<a href='tel:${data.mobil.replace(/\s/g, "")}'>${data.mobil}</a>`
@@ -235,9 +234,9 @@ export async function generatePass(data: PassData): Promise<Buffer> {
     {
       key: "back_website",
       label: "Website",
-      value: data.website || "www.myvi.de",
-      attributedValue: `<a href='https://${data.website || "www.myvi.de"}'>${
-        data.website || "www.myvi.de"
+      value: data.website || DEFAULT_WEBSITE,
+      attributedValue: `<a href='https://${data.website || DEFAULT_WEBSITE}'>${
+        data.website || DEFAULT_WEBSITE
       }</a>`,
     }
   );

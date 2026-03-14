@@ -2,14 +2,7 @@
 
 import { useState } from "react";
 import styles from "./page.module.css";
-
-const ALLOWED_DOMAINS = [
-  "mitnorm.com",
-  "myvi.de",
-  "wirpersonalberater.de",
-  "daskarriereinstitut.de",
-  "mynorm.de",
-];
+import { ALLOWED_DOMAINS, DEFAULT_WEBSITE } from "@/lib/constants";
 
 const ALLE_MARKEN = [
   "mitNORM",
@@ -48,7 +41,7 @@ export default function Home() {
     plz: "",
     ort: "",
     buchungslink: "",
-    website: "www.myvi.de",
+    website: DEFAULT_WEBSITE,
   });
   const [modus, setModus] = useState<"berater" | "intern">("berater");
   const [internUnlocked, setInternUnlocked] = useState(false);
@@ -97,15 +90,17 @@ export default function Home() {
 
   const showTitel = !!form.abteilung;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const validateForm = (): boolean => {
     const domain = form.email.toLowerCase().split("@")[1];
     if (!domain || !ALLOWED_DOMAINS.includes(domain)) {
       setError("Bitte verwende deine Firmen-E-Mail-Adresse (@mitnorm.com, @myvi.de, etc.).");
-      return;
+      return false;
     }
+    return true;
+  };
 
+  const handleAppleWallet = async () => {
+    if (!validateForm()) return;
     setLoading(true);
     setError("");
 
@@ -113,10 +108,7 @@ export default function Home() {
       const res = await fetch("/api/pass/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          adresse: [form.strasse, [form.plz, form.ort].filter(Boolean).join(" ")].filter(Boolean).join(", "),
-        }),
+        body: JSON.stringify(form),
       });
 
       if (!res.ok) {
@@ -124,12 +116,8 @@ export default function Home() {
         throw new Error(data.error || "Unbekannter Fehler");
       }
 
-      // .pkpass als Blob herunterladen
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
-
-      // iOS: Link öffnen → Wallet-Dialog erscheint automatisch
-      // Desktop: Datei herunterladen
       const link = document.createElement("a");
       link.href = url;
       link.download = `${form.vorname}-${form.nachname}-Visitenkarte.pkpass`;
@@ -144,6 +132,34 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleWallet = async () => {
+    if (!validateForm()) return;
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/google-pass", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Unbekannter Fehler");
+
+      window.open(data.url, "_blank");
+      setSuccess(true);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Fehler beim Erstellen.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
   };
 
   const colors = PREVIEW_COLORS[form.abteilung] || DEFAULT_PREVIEW;
@@ -399,26 +415,49 @@ export default function Home() {
 
           {error && <div className={styles.error}>{error}</div>}
 
-          <button
-            type="submit"
-            className={styles.btnPrimary}
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <span className={styles.spinner} />
-                Visitenkarte wird erstellt…
-              </>
-            ) : (
-              <>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="2" y="5" width="20" height="14" rx="2" />
-                  <path d="M2 10h20" />
-                </svg>
-                Zu Apple Wallet hinzufügen
-              </>
-            )}
-          </button>
+          <div className={styles.walletButtons}>
+            <button
+              type="button"
+              className={styles.btnApple}
+              disabled={loading}
+              onClick={handleAppleWallet}
+            >
+              {loading ? (
+                <>
+                  <span className={styles.spinner} />
+                  Wird erstellt…
+                </>
+              ) : (
+                <>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                  </svg>
+                  Apple Wallet
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              className={styles.btnGoogle}
+              disabled={loading}
+              onClick={handleGoogleWallet}
+            >
+              {loading ? (
+                <>
+                  <span className={styles.spinner} />
+                  Wird erstellt…
+                </>
+              ) : (
+                <>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3.01 6.06C3.01 5.47 3.49 5 4.09 5h15.84c.59 0 1.07.47 1.07 1.06v11.88c0 .59-.48 1.06-1.07 1.06H4.09c-.6 0-1.08-.47-1.08-1.06V6.06zM12 15.25c1.79 0 3.25-1.46 3.25-3.25S13.79 8.75 12 8.75 8.75 10.21 8.75 12s1.46 3.25 3.25 3.25z"/>
+                  </svg>
+                  Google Wallet
+                </>
+              )}
+            </button>
+          </div>
 
           <p className={styles.hint}>
             * Pflichtfelder · Deine Daten werden sicher gespeichert.

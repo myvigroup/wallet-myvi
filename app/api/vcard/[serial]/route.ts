@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { DEFAULT_WEBSITE } from "@/lib/constants";
 
 export async function GET(
   req: NextRequest,
@@ -7,7 +8,7 @@ export async function GET(
 ) {
   const { data } = await supabaseAdmin
     .from("berater_cards")
-    .select("*")
+    .select("vorname, nachname, abteilung, titel, mobil, telefon, email, strasse, ort, plz, website")
     .eq("pass_serial", params.serial)
     .single();
 
@@ -24,7 +25,7 @@ export async function GET(
     data.telefon ? `TEL;TYPE=WORK:${data.telefon}` : "",
     `EMAIL;TYPE=WORK:${data.email}`,
     data.strasse || data.ort ? `ADR;TYPE=WORK:;;${data.strasse || ""};${data.ort || ""};;${data.plz || ""};` : "",
-    `URL:https://${data.website || "www.myvi.de"}`,
+    `URL:https://${data.website || DEFAULT_WEBSITE}`,
     "NOTE:MYVI Financial Guidance Group",
     "END:VCARD",
   ]

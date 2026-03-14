@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import { generatePass } from "@/lib/passkit";
+import { generateGoogleWalletUrl } from "@/lib/google-wallet";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ALLOWED_DOMAINS, DEFAULT_WEBSITE, composeAddress } from "@/lib/constants";
 
@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const passBuffer = await generatePass({
+    const saveUrl = generateGoogleWalletUrl({
       serial,
       vorname,
       nachname,
@@ -102,28 +102,12 @@ export async function POST(req: NextRequest) {
       website: website || DEFAULT_WEBSITE,
     });
 
-    const filename = `${vorname}-${nachname}-Visitenkarte.pkpass`
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/ä/g, "ae")
-      .replace(/ö/g, "oe")
-      .replace(/ü/g, "ue")
-      .replace(/ß/g, "ss");
-
-    return new Response(new Uint8Array(passBuffer), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/vnd.apple.pkpass",
-        "Content-Disposition": `attachment; filename="${filename}"`,
-        "Cache-Control": "no-cache, no-store",
-      },
-    });
+    return NextResponse.json({ url: saveUrl });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    const stack = error instanceof Error ? error.stack : "";
-    console.error("Pass Generation Error:", message, stack);
+    console.error("Google Wallet Error:", message);
     return NextResponse.json(
-      { error: `Pass-Fehler: ${message}` },
+      { error: `Google Wallet Fehler: ${message}` },
       { status: 500 }
     );
   }
