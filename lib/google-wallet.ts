@@ -52,7 +52,7 @@ export function generateGoogleWalletUrl(data: GooglePassData): string {
   const payload = {
     iss: serviceAccountEmail,
     aud: "google",
-    origins: [],
+    origins: [baseUrl],
     typ: "savetowallet",
     payload: {
       genericClasses: [

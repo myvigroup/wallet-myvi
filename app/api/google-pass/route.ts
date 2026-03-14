@@ -89,6 +89,15 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    console.log("Google Wallet ENV check:", {
+      hasIssuerId: !!process.env.GOOGLE_WALLET_ISSUER_ID,
+      issuerId: process.env.GOOGLE_WALLET_ISSUER_ID,
+      hasEmail: !!process.env.GOOGLE_WALLET_SERVICE_ACCOUNT_EMAIL,
+      serviceEmail: process.env.GOOGLE_WALLET_SERVICE_ACCOUNT_EMAIL,
+      hasKey: !!process.env.GOOGLE_WALLET_PRIVATE_KEY,
+      keyLength: process.env.GOOGLE_WALLET_PRIVATE_KEY?.length,
+    });
+
     const saveUrl = generateGoogleWalletUrl({
       serial,
       vorname,
@@ -101,6 +110,8 @@ export async function POST(req: NextRequest) {
       email: normalizedEmail,
       website: website || DEFAULT_WEBSITE,
     });
+
+    console.log("Google Wallet URL length:", saveUrl.length);
 
     return NextResponse.json({ url: saveUrl });
   } catch (error) {
