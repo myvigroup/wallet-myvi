@@ -35,8 +35,36 @@
   color: var(--myvi-gray);
 }
 
-.backLink {
+.headerActions {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btnRefresh {
+  background: var(--myvi-gold-light);
+  color: var(--myvi-gold-1);
+  border: 1px solid var(--myvi-border);
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnRefresh:hover {
+  background: var(--myvi-gold-glow);
+}
+
+.btnRefresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.backLink {
   font-size: 13px;
   color: var(--myvi-gold-1);
   text-decoration: none;

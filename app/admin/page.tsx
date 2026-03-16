@@ -133,9 +133,18 @@ export default function AdminPage() {
             <h1 className={styles.headline}>Admin Dashboard</h1>
             <p className={styles.subline}>Visitenkarten verwalten</p>
           </div>
-          <Link href="/" className={styles.backLink}>
-            ← Zurück
-          </Link>
+          <div className={styles.headerActions}>
+            <button
+              className={styles.btnRefresh}
+              onClick={() => fetchCards(storedPassword)}
+              disabled={loading}
+            >
+              {loading ? "Lade…" : "↻ Aktualisieren"}
+            </button>
+            <Link href="/" className={styles.backLink}>
+              ← Zurück
+            </Link>
+          </div>
         </header>
 
         <div className={styles.stats}>
