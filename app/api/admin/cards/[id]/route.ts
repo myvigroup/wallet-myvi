@@ -7,6 +7,27 @@ function checkPassword(req: NextRequest): boolean {
   return pw === process.env.ADMIN_PASSWORD;
 }
 
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  if (!checkPassword(req)) {
+    return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 });
+  }
+
+  const { data, error } = await supabaseAdmin
+    .from("berater_cards")
+    .select("*")
+    .eq("id", params.id)
+    .single();
+
+  if (error || !data) {
+    return NextResponse.json({ error: "Karte nicht gefunden" }, { status: 404 });
+  }
+
+  return NextResponse.json(data);
+}
+
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }

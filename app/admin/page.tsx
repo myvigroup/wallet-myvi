@@ -52,6 +52,7 @@ export default function AdminPage() {
     setStoredPassword(password);
     setAuthenticated(true);
     setPasswordError(false);
+    sessionStorage.setItem("admin_password", password);
   };
 
   useEffect(() => {
@@ -183,7 +184,9 @@ export default function AdminPage() {
                 {cards.map((card) => (
                   <tr key={card.id} className={styles.tr}>
                     <td className={styles.td} data-label="Name">
-                      {card.vorname} {card.nachname}
+                      <Link href={`/admin/${card.id}`} className={styles.nameLink}>
+                        {card.vorname} {card.nachname}
+                      </Link>
                       {card.titel && (
                         <span style={{ color: "var(--myvi-gray)", fontSize: 12, marginLeft: 6 }}>
                           {card.titel}
