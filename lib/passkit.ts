@@ -21,48 +21,56 @@ const BRAND_CONFIG: Record<string, {
   foregroundColor: string;
   labelColor: string;
   logoText: string;
+  logoFile: string;
 }> = {
   "mitNORM": {
     backgroundColor: "rgb(0, 26, 83)",
     foregroundColor: "rgb(255, 255, 255)",
     labelColor: "rgb(6, 186, 221)",
     logoText: "mitNORM",
+    logoFile: "logo-mitnorm.png",
   },
   "mitNORM Firmenberatung": {
     backgroundColor: "rgb(50, 55, 60)",
     foregroundColor: "rgb(255, 255, 255)",
     labelColor: "rgb(176, 223, 248)",
     logoText: "mitNORM Firmenberatung",
+    logoFile: "logo-firmenberatung.png",
   },
   "EnergyFinance": {
     backgroundColor: "rgb(7, 7, 26)",
     foregroundColor: "rgb(255, 255, 255)",
     labelColor: "rgb(147, 196, 94)",
     logoText: "EnergyFinance",
+    logoFile: "logo-energyfinance.png",
   },
   "Das Karriere-Institut": {
     backgroundColor: "rgb(204, 20, 38)",
     foregroundColor: "rgb(255, 255, 255)",
     labelColor: "rgb(255, 210, 215)",
     logoText: "Das Karriere-Institut",
+    logoFile: "logo-karriereinstitut.png",
   },
   "Wir:Personalberater": {
     backgroundColor: "rgb(105, 159, 91)",
     foregroundColor: "rgb(255, 255, 255)",
     labelColor: "rgb(230, 255, 220)",
     logoText: "Wir:Personalberater",
+    logoFile: "logo-wirpersonalberater.png",
   },
   "myNORM": {
     backgroundColor: "rgb(14, 19, 62)",
     foregroundColor: "rgb(255, 255, 255)",
     labelColor: "rgb(73, 172, 143)",
     logoText: "myNORM",
+    logoFile: "logo-mitnorm.png",
   },
   "MYVI Group": {
     backgroundColor: "rgb(41, 37, 37)",
     foregroundColor: "rgb(255, 255, 255)",
     labelColor: "rgb(200, 184, 157)",
     logoText: "MYVI Group",
+    logoFile: "logo-myvi.png",
   },
 };
 
@@ -110,12 +118,6 @@ function loadCertificates() {
 
 const MODEL_PATH = path.resolve(process.cwd(), "passes", "visitenkarte.pass");
 
-const TRANSPARENT_1PX_PNG = Buffer.from(
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQAB" +
-  "Nl7BcQAAAABJRU5ErkJggg==",
-  "base64"
-);
-
 let _cachedCerts: ReturnType<typeof loadCertificates> | null = null;
 function getCertificates() {
   if (!_cachedCerts) _cachedCerts = loadCertificates();
@@ -144,11 +146,11 @@ export async function generatePass(data: PassData): Promise<Buffer> {
     }
   );
 
-  // Tochterfirmen: MYVI-Logo entfernen (durch transparentes 1x1 PNG ersetzen)
-  if (data.abteilung !== "MYVI Group") {
-    pass.addBuffer("logo.png", TRANSPARENT_1PX_PNG);
-    pass.addBuffer("logo@2x.png", TRANSPARENT_1PX_PNG);
-  }
+  // Markenlogo einsetzen (überschreibt das Standard-Logo aus dem Model)
+  const logoPath = path.resolve(process.cwd(), "public", brand.logoFile);
+  const logoBuf = fs.readFileSync(logoPath);
+  pass.addBuffer("logo.png", logoBuf);
+  pass.addBuffer("logo@2x.png", logoBuf);
 
   // Primärfeld: Name (groß, prominent)
   pass.primaryFields.push({

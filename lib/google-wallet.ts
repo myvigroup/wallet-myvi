@@ -14,17 +14,17 @@ export type GooglePassData = {
   website: string;
 };
 
-const BRAND_HEX: Record<string, string> = {
-  "mitNORM":                "#001A53",
-  "mitNORM Firmenberatung": "#32373C",
-  "EnergyFinance":          "#07071A",
-  "Das Karriere-Institut":  "#CC1426",
-  "Wir:Personalberater":    "#699F5B",
-  "myNORM":                 "#0E133E",
-  "MYVI Group":             "#292525",
+const BRAND_CONFIG: Record<string, { hex: string; logo: string }> = {
+  "mitNORM":                { hex: "#001A53", logo: "/logo-mitnorm.png" },
+  "mitNORM Firmenberatung": { hex: "#32373C", logo: "/logo-firmenberatung.png" },
+  "EnergyFinance":          { hex: "#07071A", logo: "/logo-energyfinance.png" },
+  "Das Karriere-Institut":  { hex: "#CC1426", logo: "/logo-karriereinstitut.png" },
+  "Wir:Personalberater":    { hex: "#699F5B", logo: "/logo-wirpersonalberater.png" },
+  "myNORM":                 { hex: "#0E133E", logo: "/logo-mitnorm.png" },
+  "MYVI Group":             { hex: "#292525", logo: "/logo-myvi.png" },
 };
 
-const DEFAULT_HEX = "#292525";
+const DEFAULT_BRAND = { hex: "#292525", logo: "/logo-myvi.png" };
 
 export function generateGoogleWalletUrl(data: GooglePassData): string {
   const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID!;
@@ -36,7 +36,7 @@ export function generateGoogleWalletUrl(data: GooglePassData): string {
 
   const classId = `${issuerId}.myvi-visitenkarte`;
   const objectId = `${issuerId}.${data.serial.replace(/-/g, "_")}`;
-  const bgColor = BRAND_HEX[data.abteilung] || DEFAULT_HEX;
+  const brand = BRAND_CONFIG[data.abteilung] || DEFAULT_BRAND;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://wallet.myvi.de";
 
   const textModules = [
@@ -67,10 +67,10 @@ export function generateGoogleWalletUrl(data: GooglePassData): string {
           id: objectId,
           classId,
           state: "ACTIVE",
-          hexBackgroundColor: bgColor,
+          hexBackgroundColor: brand.hex,
           logo: {
             sourceUri: {
-              uri: `${baseUrl}/logo-white.png`,
+              uri: `${baseUrl}${brand.logo}`,
             },
           },
           cardTitle: {
