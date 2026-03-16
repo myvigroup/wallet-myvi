@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import { generateGoogleWalletUrl } from "@/lib/google-wallet";
+import { createGoogleWalletUrl } from "@/lib/google-wallet";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ALLOWED_DOMAINS, DEFAULT_WEBSITE, composeAddress } from "@/lib/constants";
 
@@ -89,16 +89,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    console.log("Google Wallet ENV check:", {
-      hasIssuerId: !!process.env.GOOGLE_WALLET_ISSUER_ID,
-      issuerId: process.env.GOOGLE_WALLET_ISSUER_ID,
-      hasEmail: !!process.env.GOOGLE_WALLET_SERVICE_ACCOUNT_EMAIL,
-      serviceEmail: process.env.GOOGLE_WALLET_SERVICE_ACCOUNT_EMAIL,
-      hasKey: !!process.env.GOOGLE_WALLET_PRIVATE_KEY,
-      keyLength: process.env.GOOGLE_WALLET_PRIVATE_KEY?.length,
-    });
-
-    const saveUrl = generateGoogleWalletUrl({
+    const saveUrl = await createGoogleWalletUrl({
       serial,
       vorname,
       nachname,
@@ -110,8 +101,6 @@ export async function POST(req: NextRequest) {
       email: normalizedEmail,
       website: website || DEFAULT_WEBSITE,
     });
-
-    console.log("Google Wallet URL length:", saveUrl.length);
 
     return NextResponse.json({ url: saveUrl });
   } catch (error) {
