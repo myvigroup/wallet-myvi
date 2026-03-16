@@ -26,6 +26,15 @@ export default function AdminPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [storedPassword, setStoredPassword] = useState("");
 
+  useEffect(() => {
+    const stored = sessionStorage.getItem("admin_password");
+    if (stored) {
+      setPassword(stored);
+      setStoredPassword(stored);
+      setAuthenticated(true);
+    }
+  }, []);
+
   const fetchCards = useCallback(async (pw: string) => {
     setLoading(true);
     setError("");
