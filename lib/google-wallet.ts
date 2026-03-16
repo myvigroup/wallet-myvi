@@ -90,7 +90,7 @@ function buildObjectPayload(data: GooglePassData) {
       },
     },
     cardTitle: {
-      defaultValue: { language: "de", value: data.abteilung || "MYVI Group" },
+      defaultValue: { language: "de", value: " " },
     },
     ...(data.titel ? {
       subheader: {
