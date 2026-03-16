@@ -92,9 +92,11 @@ function buildObjectPayload(data: GooglePassData) {
     cardTitle: {
       defaultValue: { language: "de", value: data.abteilung || "MYVI Group" },
     },
-    subheader: {
-      defaultValue: { language: "de", value: data.titel || "" },
-    },
+    ...(data.titel ? {
+      subheader: {
+        defaultValue: { language: "de", value: data.titel },
+      },
+    } : {}),
     header: {
       defaultValue: { language: "de", value: `${data.vorname} ${data.nachname}` },
     },
