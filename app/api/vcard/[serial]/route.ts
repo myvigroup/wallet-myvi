@@ -12,7 +12,20 @@ export async function GET(
     .eq("pass_serial", params.serial)
     .single();
 
-  if (!data) return new Response("Not found", { status: 404 });
+  if (!data) {
+    const html = `<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Visitenkarte nicht verfügbar</title>
+<style>body{font-family:-apple-system,sans-serif;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.card{text-align:center;padding:40px;max-width:400px}.card h1{font-size:20px;margin-bottom:12px;color:#c8b89d}
+.card p{color:rgba(255,255,255,0.6);font-size:15px;line-height:1.6}</style>
+</head><body><div class="card"><h1>Visitenkarte nicht mehr verfügbar</h1>
+<p>Diese digitale Visitenkarte wurde deaktiviert und ist nicht mehr abrufbar.</p></div></body></html>`;
+    return new Response(html, {
+      status: 410,
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
+  }
 
   const vcard = [
     "BEGIN:VCARD",

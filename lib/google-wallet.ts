@@ -170,3 +170,26 @@ export async function createGoogleWalletUrl(data: GooglePassData): Promise<strin
 
   return `https://pay.google.com/gp/v/save/${token}`;
 }
+
+export async function deactivateGoogleWalletObject(serial: string): Promise<void> {
+  const { issuerId } = getCredentials();
+  const objectId = `${issuerId}.${serial.replace(/-/g, "_")}`;
+  const accessToken = await getAccessToken();
+
+  const res = await fetch(
+    `https://walletobjects.googleapis.com/walletobjects/v1/genericObject/${objectId}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ state: "INACTIVE" }),
+    }
+  );
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(`Deactivation failed: ${JSON.stringify(err)}`);
+  }
+}
