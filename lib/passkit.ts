@@ -142,7 +142,7 @@ export async function generatePass(data: PassData): Promise<Buffer> {
       backgroundColor: brand.backgroundColor,
       foregroundColor: brand.foregroundColor,
       labelColor: brand.labelColor,
-      logoText: "",
+      logoText: " ",
       organizationName: " ",
     }
   );
