@@ -150,6 +150,7 @@ export async function generatePass(data: PassData): Promise<Buffer> {
   const logoBuf = fs.readFileSync(logoPath);
   pass.addBuffer("logo.png", logoBuf);
   pass.addBuffer("logo@2x.png", logoBuf);
+  pass.addBuffer("logo@3x.png", logoBuf);
 
   // Primärfeld: Name (groß, prominent)
   pass.primaryFields.push({
